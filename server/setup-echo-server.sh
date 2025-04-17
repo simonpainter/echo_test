@@ -108,19 +108,13 @@ update_services_file() {
 configure_firewall() {
     if command -v ufw &> /dev/null; then
         log_info "Firewall (ufw) detected"
-        read -p "Do you want to open port 7 in the firewall? (y/n): " open_firewall
-        
-        if [[ "$open_firewall" =~ ^[Yy]$ ]]; then
-            log_info "Opening TCP port 7 in firewall..."
-            ufw allow 7/tcp
+        log_info "Opening TCP port 7 in firewall..."
+        ufw allow 7/tcp
             
-            log_info "Opening UDP port 7 in firewall..."
-            ufw allow 7/udp
-            
-            log_info "Firewall rules added for echo service"
-        else
-            log_warn "Firewall ports not opened. Make sure port 7 is accessible if needed."
-        fi
+        log_info "Opening UDP port 7 in firewall..."
+        ufw allow 7/udp
+        log_info "Firewall rules added for echo service"
+
     else
         log_warn "UFW firewall not detected. If you have a different firewall, please open port 7 manually."
     fi
