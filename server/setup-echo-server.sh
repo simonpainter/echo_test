@@ -106,15 +106,16 @@ update_services_file() {
 
 # Function to configure firewall
 configure_firewall() {
-    if command -v ufw &> /dev/null; then
+    local ufw_cmd
+    ufw_cmd=$(command -v ufw 2>/dev/null || true)
+    if [ -n "$ufw_cmd" ]; then
         log_info "Firewall (ufw) detected"
         log_info "Opening TCP port 7 in firewall..."
-        ufw allow 7/tcp
-            
-        log_info "Opening UDP port 7 in firewall..."
-        ufw allow 7/udp
-        log_info "Firewall rules added for echo service"
+        "$ufw_cmd" allow 7/tcp
 
+        log_info "Opening UDP port 7 in firewall..."
+        "$ufw_cmd" allow 7/udp
+        log_info "Firewall rules added for echo service"
     else
         log_warn "UFW firewall not detected. If you have a different firewall, please open port 7 manually."
     fi
