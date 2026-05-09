@@ -34,10 +34,10 @@ The script will:
 
 ### Client Usage
 
-The client script sends data to the echo server and measures round-trip time (RTT) with microsecond precision.
+The client connects to the echo server and measures round-trip time (RTT) with microsecond precision, displaying output in a style similar to `ping`. A warmup packet is sent silently after the TCP connection is established to settle ARP resolution and kernel state before timing begins.
 
 ```bash
-python3 client/echo_client.py [host] [port] [options]
+python3 client/echo_client.py <host> <port> [options]
 ```
 
 Required arguments:
@@ -46,14 +46,16 @@ Required arguments:
 
 Optional arguments:
 - `--size SIZE`: Size of payload in bytes (default: 64)
-- `--frequency FREQUENCY`: Frequency to send packets in seconds (default: 1.0)
-- `--count COUNT`: Number of packets to send (default: 0, meaning infinite)
+- `--frequency FREQUENCY`: Interval between packets in seconds (default: 1.0)
+- `--count COUNT`: Number of packets to send; 0 means infinite (default: 0)
 - `--timeout TIMEOUT`: Socket timeout in seconds (default: 5.0)
-- `--log-dir LOG_DIR`: Directory to store log files (default: logs)
+- `--csv PATH`: Save precise timing data to a CSV file (optional)
+
+Press **Ctrl+C** to stop an infinite run; a statistics summary is always printed on exit.
 
 ### Examples
 
-Run a test with default settings to a server at 10.0.0.1:
+Run a continuous test against a server at 10.0.0.1:
 ```bash
 python3 client/echo_client.py 10.0.0.1 7
 ```
@@ -63,15 +65,28 @@ Send 100 packets of 1024 bytes at 0.5-second intervals:
 python3 client/echo_client.py 10.0.0.1 7 --size 1024 --frequency 0.5 --count 100
 ```
 
-### Output & Logs
+Save timing data to a CSV file:
+```bash
+python3 client/echo_client.py 10.0.0.1 7 --count 60 --csv results/run1.csv
+```
 
-The client generates two output files:
-1. A log file with general information (`logs/echo_client_TIMESTAMP.log`)
-2. A CSV file with precise timing data (`logs/echo_client_TIMESTAMP_timings.csv`)
+### Output
 
-The CSV contains columns for:
-- packet_num: Sequential packet number
-- timestamp: Human-readable timestamp
-- send_time_ns: Send time in nanoseconds
-- receive_time_ns: Receive time in nanoseconds
-- rtt_us: Round-trip time in microseconds
+Each packet prints a single line and a summary is shown on exit:
+
+```
+ECHO 10.0.0.1:7 (64 bytes of data)
+64 bytes from 10.0.0.1:7: seq=1 time=312.450 μs
+64 bytes from 10.0.0.1:7: seq=2 time=298.112 μs
+^C
+--- 10.0.0.1:7 echo statistics ---
+2 packets transmitted, 2 received, 0.0% packet loss
+rtt min/avg/max/stddev = 298.112/305.281/312.450/10.139 μs
+```
+
+If `--csv` is specified the file contains these columns:
+- `packet_num`: Sequential packet number
+- `timestamp`: Human-readable timestamp
+- `send_time_ns`: Send time in nanoseconds
+- `receive_time_ns`: Receive time in nanoseconds
+- `rtt_us`: Round-trip time in microseconds
