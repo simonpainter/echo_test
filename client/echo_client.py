@@ -62,6 +62,16 @@ def main():
         print(f"ECHO {args.host}:{args.port} ({args.size} bytes of data)")
         sock.connect((args.host, args.port))
 
+        # Send one unrecorded warmup packet so that TCP session setup,
+        # ARP resolution, and kernel state are all complete before timing starts.
+        sock.sendall(payload)
+        warmup = b''
+        while len(warmup) < args.size:
+            chunk = sock.recv(args.size - len(warmup))
+            if not chunk:
+                raise ConnectionError("Connection closed by server")
+            warmup += chunk
+
         packet_num = 1
         while args.count == 0 or packet_num <= args.count:
             ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
