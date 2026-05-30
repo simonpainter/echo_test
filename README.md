@@ -90,3 +90,13 @@ If `--csv` is specified the file contains these columns:
 - `send_time_ns`: Send time in nanoseconds
 - `receive_time_ns`: Receive time in nanoseconds
 - `rtt_us`: Round-trip time in microseconds
+
+## Repository standards and templates
+
+- License: [MIT](LICENSE)
+- Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Security policy: [SECURITY.md](SECURITY.md)
+- Pull request template: [`.github/pull_request_template.md`](.github/pull_request_template.md)
+- Issue templates: [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE)
+- Copilot instructions: [`.github/copilot-instructions.md`](.github/copilot-instructions.md)
